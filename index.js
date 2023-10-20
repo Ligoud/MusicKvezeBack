@@ -102,7 +102,7 @@ socket.on("connection", (ws) => {
 
 // Health
 const host = "localhost";
-const port = 8000;
+const port = 8080;
 
 const requestListener = function (req, res) {
   res.writeHead(200);

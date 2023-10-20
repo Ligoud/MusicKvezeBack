@@ -1,6 +1,7 @@
 # Use the official Node.js image as the base image
 FROM node:14
 EXPOSE 8080
+EXPOSE 8008
 # Set the working directory in the container
 WORKDIR /app
 
