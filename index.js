@@ -30,7 +30,7 @@ const deleteUsers = () => {
   console.log(Score);
 };
 const deleteScore = () => {
-  Score = {};
+  for (let sc in Score) Score[sc] = 0;
 };
 
 socket.on("connection", (ws) => {
@@ -44,7 +44,9 @@ socket.on("connection", (ws) => {
         resData.type = "login";
         resData.alert = "Пользователь с таким именем уже зарегистрирован";
         resData.isOk = false;
+        let isNew = false;
         if (Names[msg.name] === undefined) {
+          isNew = true;
           socketList.add(ws);
           Names[msg.name] = {};
           Names[msg.name].socket = ws;
@@ -52,8 +54,30 @@ socket.on("connection", (ws) => {
           if (!Score[msg.name]) Score[msg.name] = 0;
           resData.alert = "Регистрация прошла успешно";
           resData.isOk = true;
+        } else {
+          Names[msg.name].socket = ws;
+          resData.alert = "Авторизация прошла успешно";
+          resData.isOk = true;
         }
+
         ws.send(JSON.stringify(resData));
+        if (msg.name === "admin") {
+          if (!isNew) socketList.add(ws);
+          ws.send(
+            JSON.stringify({
+              type: "score",
+              score: Score,
+            })
+          );
+        } else if (Names["admin"]) {
+          if (!isNew) socketList.add(ws);
+          Names["admin"].socket?.send(
+            JSON.stringify({
+              type: "score",
+              score: Score,
+            })
+          );
+        }
         break;
       case "answer":
         if (!answerBlockedBy && Names[msg.name]) {
@@ -108,6 +132,15 @@ socket.on("connection", (ws) => {
             })
           );
         }
+        break;
+      case "deletescore":
+        deleteScore();
+        Names["admin"].socket?.send(
+          JSON.stringify({
+            type: "score",
+            score: Score,
+          })
+        );
         break;
       default:
         break;
