@@ -1,7 +1,22 @@
 const webSocket = require("ws");
 const http = require("http");
 
-const socket = new webSocket.Server({ port: 8008, host: "0.0.0.0" });
+// Health
+// const host = "0.0.0.0";
+const port = 8080;
+
+const requestListener = function (req, res) {
+  res.writeHead(200);
+  res.end("Health!");
+};
+
+const server = http.createServer(requestListener);
+server.listen(port, () => {
+  console.log(`Server is running `);
+});
+//
+
+const socket = new webSocket.Server({ server });
 const socketList = new Set(); //Уникальность
 let Names = {};
 let Score = {};
@@ -98,18 +113,4 @@ socket.on("connection", (ws) => {
         break;
     }
   });
-});
-
-// Health
-const host = "0.0.0.0";
-const port = 8080;
-
-const requestListener = function (req, res) {
-  res.writeHead(200);
-  res.end("Health!");
-};
-
-const server = http.createServer(requestListener);
-server.listen(port, host, () => {
-  console.log(`Server is running on http://${host}:${port}`);
 });
