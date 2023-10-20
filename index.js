@@ -142,6 +142,16 @@ socket.on("connection", (ws) => {
           })
         );
         break;
+      case "clear":
+        deleteUsers();
+        Score = {};
+        Names["admin"].socket?.send(
+          JSON.stringify({
+            type: "score",
+            score: Score,
+          })
+        );
+        break;
       default:
         break;
     }
