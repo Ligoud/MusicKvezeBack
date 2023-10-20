@@ -1,5 +1,7 @@
 const webSocket = require("ws");
-const socket = new webSocket.Server({ port: 8080 });
+const http = require("http");
+
+const socket = new webSocket.Server({ port: 8008 });
 const socketList = new Set(); //Уникальность
 let Names = {};
 let Score = {};
@@ -96,4 +98,18 @@ socket.on("connection", (ws) => {
         break;
     }
   });
+});
+
+// Health
+const host = "localhost";
+const port = 8000;
+
+const requestListener = function (req, res) {
+  res.writeHead(200);
+  res.end("Health!");
+};
+
+const server = http.createServer(requestListener);
+server.listen(port, host, () => {
+  console.log(`Server is running on http://${host}:${port}`);
 });
